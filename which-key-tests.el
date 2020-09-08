@@ -130,20 +130,95 @@
     (define-key map "c" "c")
     (define-key map "dd" "dd")
     (define-key map "eee" "eee")
+    (define-key map "f" [123 45 6])
     (should (equal
              (sort (which-key--get-keymap-bindings map)
                    (lambda (a b) (string-lessp (car a) (car b))))
              '(("b" . "ignore")
                ("c" . "c")
                ("d" . "Prefix Command")
-               ("e" . "Prefix Command"))))
+               ("e" . "Prefix Command")
+               ("f" . "{ - C-f"))))
     (should (equal
              (sort (which-key--get-keymap-bindings map t)
                    (lambda (a b) (string-lessp (car a) (car b))))
              '(("b" . "ignore")
                ("c" . "c")
                ("d d" . "dd")
-               ("e e e" . "eee"))))))
+               ("e e e" . "eee")
+               ("f" . "{ - C-f"))))))
+
+(ert-deftest which-key-test--nil-replacement ()
+  (let ((which-key-replacement-alist
+         '(((nil . "winum-select-window-[1-9]") . t))))
+    (should (equal
+             (which-key--maybe-replace '("C-c C-c" . "winum-select-window-1"))
+             '()))))
+
+(ert-deftest which-key-test--key-sorting ()
+  (let ((keys '(("a" . "z")
+                ("A" . "Z")
+                ("b" . "y")
+                ("B" . "Y")
+                ("p" . "Prefix")
+                ("SPC" . "x")
+                ("C-a" . "w"))))
+    (let ((which-key-sort-uppercase-first t))
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys) 'which-key-key-order))
+        '("SPC" "A" "B" "a" "b" "p" "C-a"))))
+    (let (which-key-sort-uppercase-first)
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys) 'which-key-key-order))
+        '("SPC" "a" "b" "p" "A" "B" "C-a"))))
+    (let ((which-key-sort-uppercase-first t))
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys) 'which-key-key-order-alpha))
+        '("SPC" "A" "a" "B" "b" "p" "C-a"))))
+    (let (which-key-sort-uppercase-first)
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys) 'which-key-key-order-alpha))
+        '("SPC" "a" "A" "b" "B" "p" "C-a"))))
+    (let ((which-key-sort-uppercase-first t))
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys)
+                           'which-key-prefix-then-key-order))
+        '("SPC" "A" "B" "a" "b" "C-a" "p"))))
+    (let (which-key-sort-uppercase-first)
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys)
+                           'which-key-prefix-then-key-order))
+        '("SPC" "a" "b" "A" "B" "C-a" "p"))))
+    (let ((which-key-sort-uppercase-first t))
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys)
+                           'which-key-prefix-then-key-order-reverse))
+        '("p" "SPC" "A" "B" "a" "b" "C-a"))))
+    (let (which-key-sort-uppercase-first)
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys)
+                           'which-key-prefix-then-key-order-reverse))
+        '("p" "SPC" "a" "b" "A" "B" "C-a"))))
+    (let ((which-key-sort-uppercase-first t))
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys)
+                           'which-key-description-order))
+        '("p" "C-a" "SPC" "b" "B" "a" "A"))))
+    (let (which-key-sort-uppercase-first)
+      (should
+       (equal
+        (mapcar 'car (sort (copy-sequence keys)
+                           'which-key-description-order))
+        '("p" "C-a" "SPC" "b" "B" "a" "A"))))))
 
 (provide 'which-key-tests)
 ;;; which-key-tests.el ends here

@@ -5,4 +5,3 @@
 
 (development
  (depends-on "ert"))
-
