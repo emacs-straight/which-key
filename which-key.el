@@ -5,7 +5,7 @@
 ;; Author: Justin Burkett <justin@burkett.cc>
 ;; Maintainer: Justin Burkett <justin@burkett.cc>
 ;; URL: https://github.com/justbur/emacs-which-key
-;; Version: 3.3.2
+;; Version: 3.5.1
 ;; Keywords:
 ;; Package-Requires: ((emacs "24.4"))
 
@@ -677,12 +677,12 @@ update.")
 (defvar which-key--ignore-non-evil-keys-regexp
   (eval-when-compile
     (regexp-opt '("mouse-" "wheel-" "remap" "drag-" "scroll-bar"
-                  "select-window" "switch-frame" "which-key-"))))
+                  "select-window" "switch-frame" "which-key"))))
 (defvar which-key--ignore-keys-regexp
   (eval-when-compile
     (regexp-opt '("mouse-" "wheel-" "remap" "drag-" "scroll-bar"
                   "select-window" "switch-frame" "-state"
-                  "which-key-"))))
+                  "which-key"))))
 
 (make-obsolete-variable 'which-key-prefix-name-alist nil "2016-10-05")
 (make-obsolete-variable 'which-key-prefix-title-alist nil "2016-10-05")
@@ -1595,11 +1595,8 @@ which are strings. KEY is of the form produced by `key-binding'."
 (defun which-key--pseudo-key (key &optional prefix)
   "Replace the last key in the sequence KEY by a special symbol
 in order for which-key to allow looking up a description for the key."
-  (let* ((seq (listify-key-sequence key))
-         (final (intern (format "which-key-%s" (key-description (last seq))))))
-    (if prefix
-        (vconcat prefix (list final))
-      (vconcat (butlast seq) (list final)))))
+  (let ((seq (listify-key-sequence key)))
+    (vconcat (or prefix (butlast seq)) [which-key] (last seq))))
 
 (defun which-key--maybe-get-prefix-title (keys)
   "KEYS is a string produced by `key-description'.
@@ -2125,7 +2122,10 @@ max-lines max-width avl-lines avl-width (which-key--pages-height result))
          (key (if paging-key-bound
                   (concat key " or " which-key-paging-key)
                 key)))
-    (when which-key-use-C-h-commands
+    (when (and which-key-use-C-h-commands
+               (or (not (stringp (kbd prefix-keys)))
+                   (not (string-equal (char-to-string help-char)
+                                      (kbd prefix-keys)))))
       (which-key--propertize (format "[%s paging/help]" key)
                              'face 'which-key-note-face))))
 
