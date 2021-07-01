@@ -4,4 +4,4 @@
 (package-file "which-key.el")
 
 (development
- (depends-on "ert"))
+ (depends-on "evil"))
