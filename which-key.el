@@ -5,7 +5,7 @@
 ;; Author: Justin Burkett <justin@burkett.cc>
 ;; Maintainer: Justin Burkett <justin@burkett.cc>
 ;; URL: https://github.com/justbur/emacs-which-key
-;; Version: 3.5.1
+;; Version: 3.6.0
 ;; Keywords:
 ;; Package-Requires: ((emacs "24.4"))
 
@@ -2655,6 +2655,9 @@ Finally, show the buffer."
                         (not which-key--secondary-timer-active))
                (which-key--start-timer which-key-idle-secondary-delay t))))
           ((and which-key-show-transient-maps
+                ;; Assuming that if this is not true we're in
+                ;; `which-key-show-top-level', which would then be overwritten.
+                (> (length prefix-keys) 0)
                 (keymapp overriding-terminal-local-map)
                 ;; basic test for it being a hydra
                 (not (eq (lookup-key overriding-terminal-local-map "\C-u")
