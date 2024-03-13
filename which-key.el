@@ -1022,6 +1022,7 @@ prefix. An example is
 For backwards compatibility, REPLACEMENT can also be a string,
 but the above format is preferred, and the option to use a string
 for REPLACEMENT will eventually be removed."
+  (declare (indent defun))
   (while key
     (let ((def
            (cond
@@ -1035,7 +1036,6 @@ for REPLACEMENT will eventually be removed."
       (define-key keymap (kbd key) def))
     (setq key (pop more)
           replacement (pop more))))
-(put 'which-key-add-keymap-based-replacements 'lisp-indent-function 'defun)
 
 ;;;###autoload
 (defun which-key-add-key-based-replacements
@@ -1587,7 +1587,7 @@ Within these categories order using `which-key-key-order'."
   (let (found)
     (dolist (repl repls)
       (when (which-key--match-replacement key-binding repl)
-        (setq found 't)
+        (setq found t)
         (setq key-binding (which-key--replace-in-binding key-binding repl))))
     (when found `(replaced . ,key-binding))))
 
@@ -1659,7 +1659,7 @@ no title exists."
            (alternate (when (and binding (symbolp binding))
                         (symbol-name binding))))
       (cond (title-res title-res)
-            ((not (string-equal repl-res "")) repl-res)
+            ((not (string-empty-p repl-res)) repl-res)
             ((and (eq which-key-show-prefix 'echo) alternate)
              alternate)
             ((and (member which-key-show-prefix '(bottom top mode-line))
@@ -1700,20 +1700,20 @@ If KEY contains any \"special keys\" defined in
 (defsubst which-key--truncate-description (desc avl-width)
   "Truncate DESC description to `which-key-max-description-length'."
   (let* ((max which-key-max-description-length)
-	 (max (cl-etypecase max
-		(null nil)
-		(integer max)
-		(float (truncate (* max avl-width)))
-		(function (let ((val (funcall max avl-width)))
-			    (if (floatp val) (truncate val) val))))))
+         (max (cl-etypecase max
+                (null nil)
+                (integer max)
+                (float (truncate (* max avl-width)))
+                (function (let ((val (funcall max avl-width)))
+                            (if (floatp val) (truncate val) val))))))
     (if (and max (> (length desc) max))
         (let ((dots (and (not (equal which-key-ellipsis ""))
-			 (which-key--propertize
-			  which-key-ellipsis 'face
-			  (get-text-property (1- (length desc)) 'face desc)))))
-	  (if dots
+                         (which-key--propertize
+                          which-key-ellipsis 'face
+                          (get-text-property (1- (length desc)) 'face desc)))))
+          (if dots
               (concat (substring desc 0 (- max (length dots))) dots)
-	    (substring desc 0 max)))
+            (substring desc 0 max)))
       desc)))
 
 (defun which-key--highlight-face (description)
@@ -1885,7 +1885,7 @@ Requires `which-key-compute-remaps' to be non-nil."
                   (or all
                       ;; event 27 is escape, so this will pick up meta
                       ;; bindings and hopefully not too much more
-                      (and (numberp ev) (= ev 27))))
+                      (eql ev 27)))
              (setq bindings
                    (which-key--get-keymap-bindings-1
                     keymap bindings key nil all ignore-commands)))
@@ -1995,17 +1995,17 @@ that width."
   (let* ((col-key-width  (+ which-key-add-column-padding
                             (which-key--max-len col-keys 0)))
          (col-sep-width  (which-key--max-len col-keys 1))
-	 (avl-width      (- avl-width col-key-width col-sep-width))
+         (avl-width      (- avl-width col-key-width col-sep-width))
          (col-desc-width (min avl-width
-			      (which-key--max-len
+                              (which-key--max-len
                                col-keys 2
-			       which-key-min-column-description-width)))
+                               which-key-min-column-description-width)))
          (col-width      (+ col-key-width col-sep-width col-desc-width))
-	 (col-format     (concat "%" (int-to-string col-key-width)
+         (col-format     (concat "%" (int-to-string col-key-width)
                                  "s%s%-" (int-to-string col-desc-width) "s")))
     (cons col-width
           (mapcar (lambda (k) (apply #'format col-format k))
-		  col-keys))))
+                  col-keys))))
 
 (defun which-key--partition-list (n list)
   "Partition LIST into N-sized sublists."
@@ -2100,7 +2100,7 @@ is the width of the live window."
          (avl-width (if prefix (- max-width prefix) max-width))
          (vertical (or (and (eq which-key-popup-type 'side-window)
                             (member which-key-side-window-location '(left right)))
-		       (eq which-key-max-display-columns 1)))
+                       (eq which-key-max-display-columns 1)))
          result)
     (setq result
           (which-key--create-pages-1
@@ -2113,7 +2113,7 @@ is the width of the live window."
                 (which-key--maybe-get-prefix-title
                  (key-description prefix-keys))))
       (when prefix-top-bottom
-	;; Add back the line earlier reserved for the page information.
+        ;; Add back the line earlier reserved for the page information.
         (setf (which-key--pages-height result) max-lines))
       (when (and (= (which-key--pages-num-pages result) 1)
                  (> which-key-min-display-lines
