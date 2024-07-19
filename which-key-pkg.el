@@ -1,2 +1,2 @@
 ;; Generated package description from which-key.el  -*- no-byte-compile: t -*-
-(define-package "which-key" "3.6.0.0.20240625.112213" "Display available keybindings in popup" '((emacs "25.1")) :commit "38d4308d1143b61e4004b6e7a940686784e51500" :url "https://elpa.gnu.org/packages/which-key.html" :authors '(("Justin Burkett" . "justin@burkett.cc")) :maintainer '("Justin Burkett" . "justin@burkett.cc"))
+(define-package "which-key" "3.6.0.0.20240713.155007" "Display available keybindings in popup" '((emacs "25.1")) :commit "da97096fdbb50bf69348813c960eb8d10b2bdc44" :url "https://elpa.gnu.org/packages/which-key.html" :authors '(("Justin Burkett" . "justin@burkett.cc")) :maintainer '("Justin Burkett" . "justin@burkett.cc"))
