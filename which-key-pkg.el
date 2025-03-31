@@ -1,2 +1,2 @@
-;; Generated package description from which-key.el  -*- mode: lisp-data; no-byte-compile: t -*-
-(define-package "which-key" "3.6.1.0.20250317.231629" "Display available keybindings in popup" '((emacs "25.1")) :commit "739d18dc41234824f4f01bfaa2313510e2df14a7" :url "https://elpa.gnu.org/packages/which-key.html" :authors '(("Justin Burkett" . "justin@burkett.cc")) :maintainer '("Justin Burkett" . "justin@burkett.cc"))
+;; Generated package description from .el  -*- which-keyno-byte-compile: t -*-
+(define-package "which-key" "3.6.1.0.20250330.141700" "Display available keybindings in popup" '((emacs "25.1")) :commit "a72cfc52cc36b8233969dafb202915d36c4c5a9e" :url "https://elpa.gnu.org/packages/which-key.html" :authors '(("Justin Burkett" . "justin@burkett.cc")) :maintainer '("Justin Burkett" . "justin@burkett.cc"))
